@@ -1,6 +1,7 @@
-"use clinet";
+"use client";
 
 import Link from "next/link";
+import { useClerk, useAuth } from "@clerk/nextjs";
 import { HistoryIcon, ListVideoIcon, ThumbsUpIcon } from "lucide-react";
 import {
   SidebarGroup,
@@ -33,6 +34,9 @@ const items = [
 ];
 
 export function PersonalSection() {
+  const clerk = useClerk();
+  const { isSignedIn } = useAuth();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>You</SidebarGroupLabel>
@@ -41,7 +45,17 @@ export function PersonalSection() {
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               {/* Todo: Button에 onClick 액션 추가 */}
-              <SidebarMenuButton tooltip={item.title} isActive={false} asChild>
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={false}
+                onClick={(e) => {
+                  if (!isSignedIn && item.auth) {
+                    e.preventDefault();
+                    return clerk.openSignIn();
+                  }
+                }}
+                asChild
+              >
                 <Link href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>

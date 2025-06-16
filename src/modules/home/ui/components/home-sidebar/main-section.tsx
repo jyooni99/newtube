@@ -1,4 +1,4 @@
-"use clinet";
+"use client";
 
 import Link from "next/link";
 import { FlameIcon, HomeIcon, PlaySquareIcon } from "lucide-react";
@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useClerk, useAuth } from "@clerk/nextjs";
 
 const items = [
   { title: "Home", url: "/", icon: HomeIcon },
@@ -26,14 +27,26 @@ const items = [
 ];
 
 export function MainSection() {
+  const clerk = useClerk(); // clerk 토큰 받아오는 훅
+  const { isSignedIn } = useAuth();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              {/* Todo: Button에 onClick 액션 추가 */}
-              <SidebarMenuButton tooltip={item.title} isActive={false} asChild>
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={false}
+                onClick={(e) => {
+                  if (!isSignedIn && item.auth) {
+                    e.preventDefault();
+                    return clerk.openSignIn();
+                  }
+                }}
+                asChild
+              >
                 <Link href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
