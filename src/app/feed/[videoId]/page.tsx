@@ -1,13 +1,9 @@
-interface PageProps {
-  params: Promise<{ videoId: string }>;
+"use client";
+
+import { useParams } from "next/navigation";
+
+export default function Page() {
+  const params = useParams<{ videoId: string }>();
+
+  return <div>Page: {params.videoId}</div>;
 }
-
-import React from "react";
-
-async function Page({ params }: PageProps) {
-  const { videoId } = await params;
-
-  return <div>Page: {videoId}</div>;
-}
-
-export default Page;
