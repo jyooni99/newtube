@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import { MainSection } from "@/modules/home/ui/components/home-sidebar/main-section";
-import { PersonalSection } from "./personal-section";
 import { Separator } from "@/components/ui/separator";
+import { MainSection } from "@/modules/home/ui/components/home-sidebar/main-section";
+import { PersonalSection } from "@/modules/home/ui/components/home-sidebar/personal-section";
 
 export function HomeSidebar() {
   return (
