@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 // 유저 테이블
@@ -14,6 +15,10 @@ export const users = pgTable(
   (t) => [uniqueIndex("clerk_id_idx").on(t.clerkId)]
 );
 
+export const userRelations = relations(users, ({ many }) => ({
+  videos: many(videos),
+}));
+
 // 카테고리 테이블
 export const categories = pgTable(
   "categories",
@@ -26,3 +31,33 @@ export const categories = pgTable(
   },
   (t) => [uniqueIndex("name_idx").on(t.name)]
 );
+
+export const categoryRelations = relations(users, ({ many }) => ({
+  videos: many(videos),
+}));
+
+// 비디오 테이블
+export const videos = pgTable("videos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description"),
+  userId: uuid("user_id")
+    .references(() => users.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  categoryId: uuid("category_id").references(() => categories.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const videoRelations = relations(videos, ({ one }) => ({
+  user: one(users, {
+    fields: [videos.userId],
+    references: [users.id],
+  }),
+  category: one(categories, {
+    fields: [videos.categoryId],
+    references: [categories.id],
+  }),
+}));
